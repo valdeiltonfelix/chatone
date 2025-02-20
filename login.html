@@ -86,14 +86,15 @@ $("#entrar").on('click',function(){
         Swal.fire({
           title: "Muito bom",
           text: response.menssagem+" 😎",
-          icon: "success"
+          icon: "success",
+           didOpen: () => {
+            // Redireciona o usuário após 2 segundos (2000 milissegundos)
+            setTimeout(() => {
+                localStorage.setItem('datauser',JSON.stringify(response));
+                window.location.href = "index_principal.html"; // Altere para o caminho desejado
+            }, 2000);
+        }
         })
-
-        $(".swal2-confirm").on("click",()=>{
-
-             localStorage.setItem('datauser',JSON.stringify(response));
-             window.location = 'index_principal.html';
-        });
 
       },error:function(xhr,status,error){
        
