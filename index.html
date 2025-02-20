@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registre se na conciencia</title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="plugins/fontawesome-free/css/all.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="dist/css/adminlte.min.css">
+</head>
+<style type="text/css">
+  
+  body{
+    background-color:#192cc8 !important
+  }
+
+</style>
+<body class="hold-transition register-page">
+<div class="register-box">
+  <div class="card card-outline card-primary">
+    <div class="card-header text-center">
+      <a href="index.html" class="h2"><b>CHAT ONE</b></a>
+    </div>
+    <div class="card-body">
+      <p class="login-box-msg">Registra um novo usuário</p>
+
+      <form action="index.html" method="post" name="registro"  enctype="multipart/form-data">
+        <div class="input-group mb-3">
+          <input type="text" id="nome" class="form-control" placeholder="Nome completo">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input id="nomeusuario" type="text" class="form-control" placeholder="Nome de usuário">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-user"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group mb-3">
+          <input type="email" id="email" class="form-control" placeholder="Email">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+
+          <div class="input-group mb-3">
+             <input type="password" id="password" class="form-control" placeholder="Password">
+              <div class="input-group-append">
+                  <div class="input-group-text">
+                    <span class="fas fa-lock"></span>
+                  </div>
+            </div>
+        </div>
+
+
+                   <div class="col-sm-12">
+                    <div class="form-group clearfix">
+                    
+                        <label for="radioSuccess3 r-10" style="margin-right:15px">
+                          Sexo:
+                        </label>
+
+                      <div class="icheck-success d-inline">
+                        <input type="radio" name="r3" value="F" checked id="radioSuccess1">
+                        <label for="radioSuccess1">
+                            F
+                        </label>
+                      </div>
+              
+                      <div class="icheck-success d-inline">
+                        <input type="radio" name="r3" value="M" id="radioSuccess2">
+                        <label for="radioSuccess2">
+                         M
+                        </label>
+                      </div>
+                </div>
+          </div>
+          
+
+        
+        <div class="input-group mb-3">
+            <div class="custom-file">
+              <label class="custom-file-label" for="inputGroupFile01">Escolha um foto para perfil</label>
+              <input type="file" id="idfile" accept="image/png, image/jpeg" class="custom-file-input" id="inputGroupFile01">
+            </div>
+        </div>
+
+
+        <div class="row">
+          <!-- /.col -->
+          <div class="col-12">
+            <button type="button" class="btn register btn-primary btn-block">Register</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
+
+      <div class="social-auth-links text-center">
+        <a href="login.html" class="btn btn-block btn-success">
+          Ja possui cadastro? click aqui 
+        </a>
+    </div>
+    <!-- /.form-box -->
+  </div><!-- /.card -->
+</div>
+<!-- /.register-box -->
+
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.min.js"></script>
+
+<script src="plugins/sweetalert2/sweetalert2.all.js"></script>
+
+<script>
+$(".register").on('click',function(){
+
+  
+  var formd = new FormData();
+  var input= document.getElementById("idfile");
+      formd.append("name",$("#nome").val());
+      formd.append("email",$("#email").val());
+      formd.append("member",$("#nomeusuario").val());
+      formd.append("password",$("#password").val());
+      formd.append("imagemfile",input.files[0]);
+      formd.append("sexo",$('input[name="r3"]:checked').val());
+
+    $.ajax({
+      url:"http://"+window.location.host+":5001/users/add",
+      type:"POST",
+      contentType:false,
+      processData: false,
+      data:formd,success:function(response){
+
+        Swal.fire({
+          title: "Muito bom",
+          text: response.menssagem,
+          icon: "success"
+        });
+
+      },error:function(xhr,status,error){
+        Swal.fire({
+        icon: "error",
+        title: "Erro 🥵",
+        text: xhr.responseJSON.error,
+      });
+
+      }
+
+    })
+
+   //$("#idfile").val("");     
+
+});
+
+
+
+
+</script>
+
+</body>
+</html>

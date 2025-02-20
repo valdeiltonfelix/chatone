@@ -1,0 +1,162 @@
+  <div class="col-md-12">
+            <!-- DIRECT CHAT WARNING -->
+            <div class="card card-warning direct-chat direct-chat-warning">
+              <div class="card-header">
+                <h3 class="card-title">Bate papo</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" title="Contacts" data-widget="chat-pane-toggle">
+                    <i class="fas fa-comments"></i>
+                  </button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <!-- Conversations are loaded here -->
+                <div class="direct-chat-messages">
+            
+                </div>
+                
+                <div class="direct-chat-contacts">
+                  <ul class="contacts-list" id="list1">
+                    
+                  </ul>
+                  <!-- /.contatcts-list -->
+                </div>
+                <!-- /.direct-chat-pane -->
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <form  method="post">
+                  <div class="input-group">
+                    <input type="text" id="message" name="message" placeholder="Manda menssagem para os usuarios" class="form-control">
+                    <span class="input-group-append">
+                      <button type="button" id="send" class="btn btn-warning">Send</button>
+                    </span>
+                  </div>
+                </form>
+              </div>
+              <!-- /.card-footer-->
+            </div>
+            <!--/.direct-chat -->
+          </div>
+ <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7.0.0/bundles/stomp.umd.min.js"></script>
+<script>
+
+connect();
+
+function connect() {
+  websocket = new WebSocket("ws://" + window.location.host + ":6080");
+
+  websocket.onopen = function(event) {
+   message.mensagem="Usuario <b>"+message.usuario+"</b> adcionado ao bate papo"
+   var b = JSON.stringify(message);
+    websocket.send(b);
+    websocket.onmessage=processMessage
+  };
+
+  websocket.onerror = function(error) {
+    console.error("WebSocket error:", error);
+  };
+}
+
+
+
+
+$("#send").on("click",function(argument) {
+    
+       message.mensagem=document.getElementById('message').value
+
+            websocket.send(JSON.stringify(message));
+            websocket.onmessage=processMessage
+      });
+
+document.addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+       message.mensagem=document.getElementById('message').value
+       websocket.send(JSON.stringify(message));
+       websocket.onmessage=processMessage
+    }
+
+});
+
+
+     function processMessage({ data }){
+            const messageData = JSON.parse(data);
+            const img1=document.getElementById("img1").src
+            if (messageData.type === 'chat') {
+                if(infoUser.id==messageData.id){
+                   $(".direct-chat-messages").append(`
+                      <div class="direct-chat-msg right">
+                    <div class="direct-chat-infos clearfix">
+                      <span class="direct-chat-name float-right">${messageData.usuario}</span>
+                      <span class="direct-chat-timestamp float-left">${messageData.data} - ${messageData.time}</span>
+                    </div>
+                    <!-- /.direct-chat-infos -->
+                    <img class="direct-chat-img" src="${img1}" alt="Message User Image">
+                    <!-- /.direct-chat-img -->
+                    <div class="direct-chat-text">
+                      ${messageData.mensagem}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                  </div>   
+
+                    `);
+                }else{
+             
+                 $(".direct-chat-messages").append(`<div class="direct-chat-msg">
+                    <div class="direct-chat-infos clearfix">
+                      <span class="direct-chat-name float-left">${messageData.usuario}</span>
+                      <span class="direct-chat-timestamp float-right">${messageData.data} - ${messageData.time}</span>
+                    </div>
+                    <!-- /.direct-chat-infos -->
+                    <img class="direct-chat-img" src="http://${document.location.host}:5001/users/images/${messageData.id}/${messageData.image}" alt="Message User Image">
+                    <!-- /.direct-chat-img -->
+                    <div class="direct-chat-text">
+                    ${messageData.mensagem}
+                    </div>
+                    <!-- /.direct-chat-text -->
+                  </div>`);
+                 audio.play();
+
+
+                }
+              
+        
+                $(".contacts-list").append(`
+                  <li>
+                      <a href="#">
+                        <img class="contacts-list-img" src="http://${document.location.host}:5001/users/images/${messageData.id}/${messageData.image}" alt="User Avatar">
+
+                        <div class="contacts-list-info">
+                          <span class="contacts-list-name">
+                            ${messageData.usuario}
+                            <small class="contacts-list-date float-right"> ${messageData.data} - ${messageData.time} </small>
+                          </span>
+                          <span class="contacts-list-msg">
+                             ${messageData.mensagem}    
+                          </span>
+                        </div>
+                        <!-- /.contacts-list-info -->
+                      </a>
+                    </li>`)
+
+                    scrollScreen();
+            }
+        };
+
+function scrollScreen(){
+
+ 
+ $('.direct-chat-messages').scrollTop($('.direct-chat-messages')[0].scrollHeight);
+ $('#message').val('')
+}
+
+</script>
