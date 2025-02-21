@@ -152,7 +152,13 @@ $(".register").on('click',function(){
         Swal.fire({
           title: "Muito bom",
           text: response.menssagem,
-          icon: "success"
+          icon: "success",
+            didOpen: () => {
+            setTimeout(() => {
+                window.location.href = "login.html"; // Altere para o caminho desejado
+            }, 2000);
+        }
+
         });
 
       },error:function(xhr,status,error){
